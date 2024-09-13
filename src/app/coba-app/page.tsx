@@ -10,34 +10,31 @@ export async function generateMetadata({
   searchParams,
 }: Props): Promise<Metadata> {
   const id = searchParams.id;
-  console.log(id);
 
-  // const anime = await fetch(`https://api.jikan.moe/v4/anime/${id}`)
-  //   .then((res) => res.json())
-  //   .then((response) => response.data);
+  const anime = await fetch(`https://api.jikan.moe/v4/anime/${id}`)
+    .then((res) => res.json())
+    .then((response) => response.data);
 
   const CustomMetaData = {
-    title: "ini adalah judul",
-    description: "ini deskripsi",
+    title: anime?.title_english,
+    description: anime?.synopsis,
     openGraph: {
-      title: "ini adalah judul",
-      description: "ini deskripsi",
+      title: anime?.title_english,
+      description: anime?.synopsis,
       type: "website",
       siteName: "coba doang",
       url: "https://awandri.com",
       images: [
         {
-          url: "https://og.awandri.com/api/general?bgImageUrl=https%3A%2F%2Fcdn.myanimelist.net%2Fimages%2Fanime%2F1439%2F93480.jpg&bgType=image&description=Gabung%20bersama%20kami%21&siteName=PRUAFFILIATE&title=COBA%20COBA%20DOANG",
+          url: anime?.images?.jpg?.image_url,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: "ini adalah judul",
-      description: "ini deskripsi",
-      images: [
-        "https://og.awandri.com/api/general?bgImageUrl=https%3A%2F%2Fcdn.myanimelist.net%2Fimages%2Fanime%2F1439%2F93480.jpg&bgType=image&description=Gabung%20bersama%20kami%21&siteName=PRUAFFILIATE&title=COBA%20COBA%20DOANG",
-      ],
+      title: anime?.title_english,
+      description: anime?.synopsis,
+      images: [anime?.images?.jpg?.image_url],
     },
   };
 
