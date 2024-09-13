@@ -1,50 +1,54 @@
 import Head from "next/head";
-import { useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 
-const IndexPage = () => {
-  const [data, setData] = useState<any | null>(null);
+type AnimeData = {
+  title_english: string;
+  synopsis: string;
+  images: {
+    jpg: {
+      image_url: string;
+    };
+  };
+};
 
-  const params = useSearchParams();
-  const id = params?.get("id");
-  const title = params?.get("title");
+type Props = {
+  data: AnimeData | null;
+  error: boolean;
+};
 
-  const fetchData = useCallback(async () => {
-    if (!id) return;
-
-    try {
-      await fetch(`https://api.jikan.moe/v4/anime/${id}`)
-        .then((res) => res.json())
-        .then((response) => setData(response.data));
-    } catch (err) {
-      console.log("Failed to fetch KV details");
-    } finally {
-      console.log("done");
-    }
-  }, [id]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+const IndexPage = ({ data, error }: Props) => {
+  if (error || !data) {
+    return (
+      <div>
+        <p>Error fetching data. Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
       <Head>
         {/* Basic Meta Tags */}
-        <meta name="title" content={data?.title_english} />
-        <meta name="description" content={data?.synopsis} />
+        <meta name="title" content={data?.title_english || "Default Title"} />
+        <meta
+          name="description"
+          content={data?.synopsis || "Default Description"}
+        />
 
         {/* Open Graph Meta Tags */}
-        <meta property="og:type" content="article" />
+        <meta property="og:type" content="website" />
         <meta property="og:url" content={"https://awandri.com"} />
-        <meta property="og:title" content={title as string} />
-        <meta property="og:description" content={"Gabung bersama kami!"} />
-
+        <meta
+          property="og:title"
+          content={data?.title_english || "Default Title"}
+        />
+        <meta
+          property="og:description"
+          content={data?.synopsis || "Default Description"}
+        />
         <meta
           property="og:image"
-          content={
-            "https://og.awandri.com/api/general?bgImageUrl=https%3A%2F%2Fpruforce-uat.prudential.co.id%2Fpap-web%2Fassets%2Fimages%2Fcta.png&bgType=image&borderColor=%23000000&borderRadius=0px&borderWidth=0&description=Gabung%20bersama%20kami%21&logo=https%3A%2F%2Fpruforce-uat.prudential.co.id%2Fpap-web%2Fassets%2Fimages%2FPruLogo.png&siteName=PRUAFFILIATE&title=Cara%20Menjadi%20Affiliator"
-          }
+          content={data?.images?.jpg?.image_url || "default-image-url"}
         />
         <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:width" content="1200" />
@@ -53,13 +57,17 @@ const IndexPage = () => {
         {/* Twitter Card Meta Tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={"https://awandri.com"} />
-        <meta property="og:title" content={title as string} />
-        <meta property="og:description" content={"Gabung bersama kami!"} />
+        <meta
+          name="twitter:title"
+          content={data?.title_english || "Default Title"}
+        />
+        <meta
+          name="twitter:description"
+          content={data?.synopsis || "Default Description"}
+        />
         <meta
           name="twitter:image"
-          content={
-            "https://og.awandri.com/api/general?bgImageUrl=https%3A%2F%2Fpruforce-uat.prudential.co.id%2Fpap-web%2Fassets%2Fimages%2Fcta.png&bgType=image&borderColor=%23000000&borderRadius=0px&borderWidth=0&description=Gabung%20bersama%20kami%21&logo=https%3A%2F%2Fpruforce-uat.prudential.co.id%2Fpap-web%2Fassets%2Fimages%2FPruLogo.png&siteName=PRUAFFILIATE&title=Cara%20Menjadi%20Affiliator"
-          }
+          content={data?.images?.jpg?.image_url || "default-image-url"}
         />
       </Head>
 
@@ -71,3 +79,27 @@ const IndexPage = () => {
 };
 
 export default IndexPage;
+
+// Server-side fetching
+export async function getServerSideProps(context: any) {
+  const { id } = context.query;
+
+  try {
+    const res = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
+    const response = await res.json();
+
+    return {
+      props: {
+        data: response.data || null,
+        error: false,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        data: null,
+        error: true,
+      },
+    };
+  }
+}
