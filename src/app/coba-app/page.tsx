@@ -21,7 +21,7 @@ export async function generateMetadata({
     openGraph: {
       title: anime?.title_english,
       description: anime?.synopsis,
-      type: "website",
+      type: "article",
       siteName: "coba doang",
       url: "https://awandri.com",
       images: [

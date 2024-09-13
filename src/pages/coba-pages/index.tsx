@@ -35,7 +35,7 @@ const IndexPage = () => {
         <meta name="description" content={data?.synopsis} />
 
         {/* Open Graph Meta Tags */}
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content="article" />
         <meta property="og:url" content={"https://awandri.com"} />
         <meta property="og:title" content={title as string} />
         <meta property="og:description" content={"Gabung bersama kami!"} />
