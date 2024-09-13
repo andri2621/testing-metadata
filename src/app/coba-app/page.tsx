@@ -19,8 +19,8 @@ export async function generateMetadata({
     title: anime?.title_english,
     description: anime?.synopsis,
     openGraph: {
-      title: anime?.title_english,
-      description: anime?.synopsis,
+      title: anime?.title_english || "ini adalah judul",
+      description: anime?.synopsis || "ini deskripsi",
       type: "website",
       siteName: "coba doang",
       url: "https://awandri.com",
@@ -32,8 +32,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: anime?.title_english,
-      description: anime?.synopsis,
+      title: anime?.title_english || "ini adalah judul",
+      description: anime?.synopsis || "ini deskripsi",
       images: [anime?.images?.jpg?.image_url],
     },
   };
